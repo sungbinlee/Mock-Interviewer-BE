@@ -13,3 +13,5 @@
 4. TTS Engine: Django 서버로부터 받은 텍스트를 음성으로 변환하여 사용자에게 전달합니다.
 
 > Frontend에서 음성 입력을 받아 STT를 이용하여 텍스트로 변환하고 Django 서버로 전송하면, Django 서버에서는 요청을 OpenAI API에 전달하여 응답을 받습니다. 그런 다음 Django 서버는 TTS 엔진을 사용하여 OpenAI API로부터 받은 텍스트 응답을 음성으로 변환하여 Frontend로 전달합니다.
+## ER Diagram
+![ChatERD](https://github.com/sungbinlee/Mock-Interviewer-BE/assets/52542229/b7a74158-65e6-4e62-b41f-717c3b6f8187)
