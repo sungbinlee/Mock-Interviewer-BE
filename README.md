@@ -7,8 +7,8 @@
 ![sequence_diagram](https://github.com/sungbinlee/mock-interviewer/assets/52542229/dd53bcb3-e95a-4982-9931-ebd93d7547b2)
 
 
-1. Frontend: 사용자 인터페이스를 제공하고, 사용자로부터 음성 입력 혹은 텍스트를 입력 받아 STT를 처리하고 Django 서버에 전송합니다.
-2. Django Server: 프론트엔드로부터 요청을 받으면 OpenAI API로 전달합니다. OpenAI API로부터 받은 텍스트 응답을 TTS 엔진에 보내 음성으로 변환한 후 사용자에게 전달합니다.
+1. Frontend(Github pages): 사용자 인터페이스를 제공하고, 사용자로부터 음성 입력 혹은 텍스트를 입력 받아 STT를 처리하고 Django 서버에 전송합니다.
+2. Backend(Django): 프론트엔드로부터 요청을 받으면 OpenAI API로 전달합니다. OpenAI API로부터 받은 텍스트 응답을 TTS 엔진에 보내 음성으로 변환한 후 사용자에게 전달합니다.
 3. OpenAI API: Django 서버가 전달한 텍스트 요청을 받아 ChatGPT 모델을 이용해 응답을 생성합니다.
 4. TTS Engine: Django 서버로부터 받은 텍스트를 음성으로 변환하여 사용자에게 전달합니다.
 
