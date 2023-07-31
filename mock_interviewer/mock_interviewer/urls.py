@@ -19,5 +19,4 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('chatbot.urls')),  # chatbot 앱의 URL 매핑 포함
-
 ]
