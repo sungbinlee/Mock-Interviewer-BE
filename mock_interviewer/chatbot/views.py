@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from .models import User, Chat, UserChatRequest
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -41,7 +42,8 @@ class UserRegistration(APIView):
                 password=make_password(password),
                 email=email
             )
-            return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+            token = Token.objects.create(user=new_user)
+            return Response({'message': 'User registered successfully.', "Token": token.key}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -63,7 +65,8 @@ class UserLogin(APIView):
         if user is not None:
             # 인증 성공 시 로그인 처리
             login(request, user)
-            return Response({'message': 'User logged in successfully.'}, status=status.HTTP_200_OK)
+            token = Token.objects.get(user=user)
+            return Response({'message': 'User logged in successfully.', "Token": token.key}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
         
@@ -71,6 +74,7 @@ class UserLogin(APIView):
 
 class ChatGPTAPI(APIView):
     def get(self, request):
+        print(request.user)
         user_chats = Chat.objects.filter(user=request.user).order_by('created_at')
         conversations = [{'role': chat.role, 'content': chat.content} for chat in user_chats]
         return Response({'conversations': conversations}, status=status.HTTP_200_OK)
@@ -79,7 +83,6 @@ class ChatGPTAPI(APIView):
         # 요청으로부터 받은 데이터 추출
         user_input = request.data.get('user_input')
         chats = Chat.objects.filter(user=request.user).order_by('created_at')
-
         # 기존 채팅 내역과 새로운 채팅을 합침
         combined_chats = [{"role": chat.role, "content": chat.content} for chat in chats]
 
