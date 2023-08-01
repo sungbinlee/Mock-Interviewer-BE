@@ -45,8 +45,7 @@ class UserRegistration(APIView):
                 password=make_password(password),
                 email=email
             )
-            token = Token.objects.create(user=new_user)
-            return Response({'message': 'User registered successfully.', "Token": token.key}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
