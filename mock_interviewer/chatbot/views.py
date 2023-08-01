@@ -132,10 +132,17 @@ class ChatGPTAPI(APIView):
         tts.write_to_fp(audio_bytes_io)
         audio_bytes_io.seek(0)
 
+        authenticated_user = request.user
 
-        audio_file = "ai_response.mp3"
-        with open(audio_file, "wb") as f:
+        user_identifier = authenticated_user.username
+        audio_file = f"{user_identifier}_ai_response.mp3"
+        audio_file_path = os.path.join(BASE_DIR,'static/tts/', audio_file)
+
+        with open(audio_file_path, "wb") as f:
             f.write(audio_bytes_io.read())
 
+        base_address = request.build_absolute_uri('/')[:-1]
+        audio_url = f"{base_address}/static/tts/{audio_file}"
+
         # 응답값 프론트엔드로 전달
-        return Response({'response': ai_response, 'audio_url': audio_file}, status=status.HTTP_200_OK)
+        return Response({'response': ai_response, 'audio_url': audio_url}, status=status.HTTP_200_OK)
