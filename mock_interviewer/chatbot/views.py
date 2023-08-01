@@ -94,6 +94,7 @@ class ChatGPTAPI(APIView):
     def post(self, request):
         # 요청으로부터 받은 데이터 추출
         user_input = request.data.get('user_input')
+        interview_topic = request.data.get('interview_topic')
         chats = Chat.objects.filter(user=request.user).order_by('created_at')
         # 기존 채팅 내역과 새로운 채팅을 합침
         combined_chats = [{"role": chat.role, "content": chat.content} for chat in chats]
@@ -102,7 +103,7 @@ class ChatGPTAPI(APIView):
         if not user_input and not chats:
             system_start_message = {
                 "role": "system", 
-                "content": "I want you to act as an software engineer internship interviewer. I will be the candidate and you will ask me the interview questions for the position position. I want you to only reply as the interviewer. Do not write all the conservation at once. I want you to only do the interview with me. Ask me the questions and wait for my answers. Do not write explanations. Ask me the questions one by one like an interviewer does and wait for my answers. My first sentence is Hi'. Response with Korean"
+                "content": f"I want you to act as an {interview_topic} interviewer. I will be the candidate and you will ask me the interview questions for the position position. I want you to only reply as the interviewer. Do not write all the conservation at once. I want you to only do the interview with me. Ask me the questions and wait for my answers. Do not write explanations. Ask me the questions one by one like an interviewer does and wait for my answers. My first sentence is Hi'. Response with Korean"
             }
             combined_chats.append(system_start_message)
             # 시스템 저장
