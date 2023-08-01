@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from .models import User, Chat, UserChatRequest
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -67,12 +68,22 @@ class UserLogin(APIView):
         if user is not None:
             # 인증 성공 시 로그인 처리
             login(request, user)
-            token = Token.objects.get(user=user)
+            token = Token.objects.create(user=user)
             return Response({'message': 'User logged in successfully.', "Token": token.key}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
         
-        
+#로그아웃
+class UserLogout(ObtainAuthToken):
+    def post(self, request):
+        # Retrieve the user's token
+        token = Token.objects.get(user=request.user)
+
+        # Delete the token to perform logout
+        token.delete()
+
+        return Response({'message': 'User logged out successfully.'})
+    
 
 class ChatGPTAPI(APIView):
     def get(self, request):
