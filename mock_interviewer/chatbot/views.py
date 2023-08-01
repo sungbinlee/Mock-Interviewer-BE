@@ -10,6 +10,8 @@ import openai
 import os
 import environ
 from pathlib import Path
+from gtts import gTTS
+from io import BytesIO
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -74,7 +76,6 @@ class UserLogin(APIView):
 
 class ChatGPTAPI(APIView):
     def get(self, request):
-        print(request.user)
         user_chats = Chat.objects.filter(user=request.user).order_by('created_at')
         conversations = [{'role': chat.role, 'content': chat.content} for chat in user_chats]
         return Response({'conversations': conversations}, status=status.HTTP_200_OK)
@@ -125,5 +126,16 @@ class ChatGPTAPI(APIView):
         ai_chat = Chat(user=request.user, role="assistant", content=ai_response)
         ai_chat.save()
 
+        # TTS 생성
+        tts = gTTS(text=ai_response, lang='ko', slow=False)
+        audio_bytes_io = BytesIO()
+        tts.write_to_fp(audio_bytes_io)
+        audio_bytes_io.seek(0)
+
+
+        audio_file = "ai_response.mp3"
+        with open(audio_file, "wb") as f:
+            f.write(audio_bytes_io.read())
+
         # 응답값 프론트엔드로 전달
-        return Response({'response': ai_response}, status=status.HTTP_200_OK)
+        return Response({'response': ai_response, 'audio_url': audio_file}, status=status.HTTP_200_OK)
