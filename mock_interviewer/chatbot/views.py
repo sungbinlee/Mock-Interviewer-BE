@@ -94,11 +94,14 @@ class ChatGPTAPI(APIView):
         if chat_request_count is None:
             chat_request_count = UserChatRequest(user=user, request_count=0, date=today)
             chat_request_count.save()
+        
+        
+        limit = user.daily_chat_limit
 
         user_chats = Chat.objects.filter(user=request.user).order_by('created_at')
         conversations = [{'role': chat.role, 'content': chat.content} for chat in user_chats]
 
-        return Response({'conversations': conversations, 'count': chat_request_count.request_count}, status=status.HTTP_200_OK)
+        return Response({'conversations': conversations, 'count': chat_request_count.request_count, 'limit': limit}, status=status.HTTP_200_OK)
 
     def post(self, request):
         today = date.today()
@@ -107,7 +110,8 @@ class ChatGPTAPI(APIView):
             date=today
         )
 
-        if user_chat_request.request_count >= 5:
+        limit = request.user.daily_chat_limit
+        if user_chat_request.request_count >= limit:
             return Response({'error': 'You have exceeded the chat request limit for today.'}, status=status.HTTP_429_TOO_MANY_REQUESTS)
         
         UserChatRequest.objects.filter(pk=user_chat_request.pk).update(request_count=F('request_count') + 1)
