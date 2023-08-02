@@ -13,6 +13,8 @@ import environ
 from pathlib import Path
 from gtts import gTTS
 from io import BytesIO
+from datetime import date
+from django.db.models import F
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -86,11 +88,31 @@ class UserLogout(ObtainAuthToken):
 
 class ChatGPTAPI(APIView):
     def get(self, request):
+        user = request.user
+        today = date.today()
+        chat_request_count = UserChatRequest.objects.filter(user=user, date=today).first()
+        if chat_request_count is None:
+            chat_request_count = UserChatRequest(user=user, request_count=0, date=today)
+            chat_request_count.save()
+
         user_chats = Chat.objects.filter(user=request.user).order_by('created_at')
         conversations = [{'role': chat.role, 'content': chat.content} for chat in user_chats]
-        return Response({'conversations': conversations}, status=status.HTTP_200_OK)
+
+        return Response({'conversations': conversations, 'count': chat_request_count.request_count}, status=status.HTTP_200_OK)
 
     def post(self, request):
+        today = date.today()
+        user_chat_request, created = UserChatRequest.objects.get_or_create(
+            user=request.user,
+            date=today
+        )
+
+        if user_chat_request.request_count >= 5:
+            return Response({'error': 'You have exceeded the chat request limit for today.'}, status=status.HTTP_429_TOO_MANY_REQUESTS)
+        
+        UserChatRequest.objects.filter(pk=user_chat_request.pk).update(request_count=F('request_count') + 1)
+
+
         # 요청으로부터 받은 데이터 추출
         user_input = request.data.get('user_input')
         interview_topic = request.data.get('interview_topic')
