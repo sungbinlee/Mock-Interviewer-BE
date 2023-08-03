@@ -18,6 +18,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+
 class Chat(models.Model):
     ROLE_CHOICES = (
         ('user', 'User'),
@@ -31,6 +32,7 @@ class Chat(models.Model):
 
     def __str__(self):
         return f"{self.role} - {self.content}"
+
 
 class UserChatRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
