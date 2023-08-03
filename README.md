@@ -83,13 +83,14 @@ Mock Interview 프로젝트는 사용자가 가상의 면접을 경험하고, �
   - 로그인에 성공한 경우
 ```json
 {
-  "token": "사용자인증토큰"
+  "message": "User logged in successfully.",
+  "Token": "사용자인증토큰"
 }
 ```
   - 로그인에 실패한 경우
 ```json
 {
-  "error": "로그인에 실패했습니다. 사용자 이름과 비밀번호를 확인하세요."
+  "error": "Invalid credentials."
 }
 ```
 ### 로그아웃 (User Logout)
@@ -99,7 +100,7 @@ Mock Interview 프로젝트는 사용자가 가상의 면접을 경험하고, �
 - Response:
 ```json
 {
-  "message": "로그아웃되었습니다."
+  "message": "User logged out successfully."
 }
 ```
 ### 채팅 (Chat)
@@ -122,7 +123,9 @@ Mock Interview 프로젝트는 사용자가 가상의 면접을 경험하고, �
       "content": "AI응답메시지1"
     },
     ...
-  ]
+  ],
+  "count": 사용자 요청 횟수,
+  "limit": 사용자 채팅 리미트
 }
 ```
 - POST 요청
@@ -131,7 +134,8 @@ Mock Interview 프로젝트는 사용자가 가상의 면접을 경험하고, �
   - Request Body:
 ```json
 {
-  "user_input": "사용자입력메시지"
+  "user_input": "사용자입력메시지",
+  "interview_topic": "인터뷰주제"
 }
 ```
   - Response:
