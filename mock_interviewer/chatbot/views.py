@@ -25,6 +25,7 @@ environ.Env.read_env(
 
 User = get_user_model()
 
+
 class UserRegistration(APIView):
     def post(self, request):
         # 요청으로부터 받은 데이터 추출
