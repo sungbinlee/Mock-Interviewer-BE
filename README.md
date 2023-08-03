@@ -1,11 +1,23 @@
 # Mock-Interviewer-BE
 ## 프로젝트 개요
 Mock Interview 프로젝트는 사용자가 가상의 면접을 경험하고, 인공지능(AI) 어시스턴트와 상호작용하여 면접 역량을 향상시킬 수 있는 웹 애플리케이션입니다. 사용자는 웹 브라우저를 통해 면접 과정을 진행하며, AI 챗봇이 면접관으로서 질문을 하고, 사용자는 면접자로서 답변을 제공합니다. AI 챗봇은 실시간으로 응답을 생성하고, 음성 출력 기능을 제공하여 사용자에게 음성으로도 면접 피드백을 제공합니다.
+## 배포
+- [배포 URL](https://chat.sungbinlee.dev)
+
+- [프론트엔드](https://github.com/sungbinlee/Mock-Interviewer-FE)
+
+- 배포환경
+  - 백엔드 : AWS EC2, gunicorn, nginx
+  - 프론트엔드 : Github Page
 
 ## Block Diagram
+아래는 블록 다이어그램으로 표현한 voice-assisted chatbot 앱의 동작과 구성을 설명합니다:
+
 ![voice_assisted_chatbot_block_diagram](https://github.com/sungbinlee/mock-interviewer/assets/52542229/50c0dee2-cb8e-4c4c-b97c-a70bbe32b139)
 
 ## Sequence Diagram 
+아래의 시퀀스 다이어그램은 Frontend, Backend, OpenAI API, 그리고 TTS Engine 등의 컴포넌트들 간의 상호작용을 보여주고, 각 컴포넌트가 어떤 순서로 동작하는지를 명확하게 표현하여 시스템의 구조와 동작을 이해하는 데 도움을 줍니다.
+
 ![sequence_diagram](https://github.com/sungbinlee/mock-interviewer/assets/52542229/dd53bcb3-e95a-4982-9931-ebd93d7547b2)
 
 
@@ -29,3 +41,143 @@ Mock Interview 프로젝트는 사용자가 가상의 면접을 경험하고, �
 3. 일일 채팅 제한: 사용자는 하루에 일정 횟수의 채팅만 가능합니다. 제한 횟수를 초과하는 경우 채팅이 불가능하도록 처리하여 서버 부하를 방지합니다.
 
 4. AI 음성 출력 생성: AI 챗봇의 응답 텍스트를 음성 파일로 변환하여 사용자에게 제공합니다. 음성 출력 기능을 통해 사용자가 면접 피드백을 음성으로도 들을 수 있습니다.
+
+## API 정리
+### 회원가입 (User Registration)
+- URL: /api/user/register/
+- Method: POST
+- Description: 새로운 사용자를 등록하고 회원가입을 수행합니다.
+- Request Body:
+```json
+{
+  "username": "사용자이름",
+  "email": "이메일주소",
+  "password": "비밀번호"
+}
+```
+- Response:
+  - 성공적으로 회원가입한 경우
+```json
+{
+  "message": "회원가입이 완료되었습니다."
+}
+```
+  - 이미 존재하는 사용자 이름 또는 이메일로 회원가입하려는 경우
+```json
+{
+  "message": "이미 존재하는 사용자입니다."
+}
+```
+### 로그인 (User Login)
+- URL: /api/user/login/
+- Method: POST
+- Description: 등록된 사용자가 로그인을 수행합니다.
+- Request Body:
+```json
+{
+  "username": "사용자이름",
+  "password": "비밀번호"
+}
+```
+- Response:
+  - 로그인에 성공한 경우
+```json
+{
+  "token": "사용자인증토큰"
+}
+```
+  - 로그인에 실패한 경우
+```json
+{
+  "error": "로그인에 실패했습니다. 사용자 이름과 비밀번호를 확인하세요."
+}
+```
+### 로그아웃 (User Logout)
+- URL: /api/user/logout/
+- Method: GET
+- Description: 로그인된 사용자를 로그아웃 처리하고 인증 토큰을 무효화합니다.
+- Response:
+```json
+{
+  "message": "로그아웃되었습니다."
+}
+```
+### 채팅 (Chat)
+- URL: /api/chat/gpt/
+- Method: GET, POST
+- Description: 인공지능 채팅 AI와 사용자간의 채팅을 수행합니다.
+- GET 요청
+  - Description: 사용자의 채팅 기록을 가져옵니다.
+  - Headers: Authorization: Token 사용자인증토큰
+  - Response:
+```json
+{
+  "conversations": [
+    {
+      "role": "user",
+      "content": "사용자채팅메시지1"
+    },
+    {
+      "role": "assistant",
+      "content": "AI응답메시지1"
+    },
+    ...
+  ]
+}
+```
+- POST 요청
+  - Description: 사용자가 AI에게 메시지를 보내고 응답을 받습니다.
+  - Headers: Authorization: Token 사용자인증토큰
+  - Request Body:
+```json
+{
+  "user_input": "사용자입력메시지"
+}
+```
+  - Response:
+```json
+{
+  "response": "AI응답메시지",
+  "audio_url": "AI응답음성URL"
+}
+
+```
+## 설치 및 실행
+
+1. 해당 프로젝트를 클론합니다.
+
+```
+git clone https://github.com/sungbinlee/Mock-Interviewer-BE.git
+```
+
+2. 가상환경을 생성하고 필요한 패키지를 설치합니다:
+
+```
+python -m venv venv
+source venv/bin/activate  # Windows에서는 "venv\Scripts\activate" 실행
+pip install -r requirements.txt
+```
+
+3. 데이터베이스를 마이그레이션합니다:
+
+```
+python manage.py migrate
+```
+
+4. 환경변수 파일을 작성합니다. (manage.py와 동일한 위치에)
+```
+vi .env
+```
+```
+OPENAI_API_KEY="[사용자 API 키]"
+DEBUG=True
+SECRET_KEY="[사용자 시크릿 키]"
+```
+
+5. 개발 서버를 실행합니다:
+
+```
+python manage.py runserver
+```
+
+서버가 성공적으로 실행되면 브라우저에서 http://localhost:8000/ 으로 접속하여 블로그 웹 애플리케이션을 사용할 수 있습니다.
