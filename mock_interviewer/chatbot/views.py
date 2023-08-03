@@ -78,10 +78,9 @@ class UserLogin(APIView):
 #로그아웃
 class UserLogout(ObtainAuthToken):
     def post(self, request):
-        # Retrieve the user's token
         token = Token.objects.get(user=request.user)
 
-        # Delete the token to perform logout
+        # 로그아웃시 유저 토큰 삭제
         token.delete()
 
         return Response({'message': 'User logged out successfully.'})
