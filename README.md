@@ -8,7 +8,7 @@ Mock Interview 프로젝트는 사용자가 가상의 면접을 경험하고, �
 
 - 배포환경
   - 백엔드 : AWS EC2, gunicorn, nginx
-  - 프론트엔드 : Github Page
+  - 프론트엔드 : Github Pages
 
 ## Block Diagram
 아래는 블록 다이어그램으로 표현한 voice-assisted chatbot 앱의 동작과 구성을 설명합니다:
