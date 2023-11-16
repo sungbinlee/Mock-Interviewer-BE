@@ -31,10 +31,15 @@ class UserRegistration(APIView):
         # 요청으로부터 받은 데이터 추출
         username = request.data.get('username')
         password = request.data.get('password')
+        password2 = request.data.get('password2')
         email = request.data.get('email')
 
+        # 비밀번호 검증
+        if password != password2:
+            return Response({'error': 'Passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
+
         # 필수 필드가 있는지 확인
-        if not username or not password or not email:
+        if not username or not password or not email or not password2:
             return Response({'error': 'Username, password, and email are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 이미 사용 중인 username인지 확인
