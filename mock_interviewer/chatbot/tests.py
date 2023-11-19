@@ -50,3 +50,15 @@ class AccountTests(APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
+    def test_login(self):
+        user = User.objects.create_user(username='testuser', password='testpassword')
+        
+        url = reverse('user-login')
+        data = {
+            'username': 'testuser',
+            'password': 'testpassword'
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('Token', response.data)
