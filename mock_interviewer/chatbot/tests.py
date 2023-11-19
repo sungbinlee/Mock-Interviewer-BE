@@ -62,3 +62,20 @@ class AccountTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('Token', response.data)
+
+
+class ChatGPTAPITests(APITestCase):
+    def test_get_conversations(self):
+        User.objects.create_user(username='testuser', password='testpassword')
+        url = reverse('user-login')
+        gpt_url = reverse('chat-gpt')
+        data = {
+            'username': 'testuser',
+            'password': 'testpassword'
+        }
+        self.client.post(url, data, format='json')
+        token = Token.objects.get(user__username='testuser')
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = client.get(gpt_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
