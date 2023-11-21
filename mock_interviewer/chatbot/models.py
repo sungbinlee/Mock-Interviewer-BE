@@ -1,13 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class User(AbstractUser):
     SOCIAL_PROVIDERS = (
-        ('Kakao', 'Kakao'),
+        ("Kakao", "Kakao"),
         # 추가적인 소셜 로그인 제공자를 필요에 따라 여기에 추가
     )
-    
-    social_provider = models.CharField(max_length=50, choices=SOCIAL_PROVIDERS, blank=True, null=True)
+
+    social_provider = models.CharField(
+        max_length=50, choices=SOCIAL_PROVIDERS, blank=True, null=True
+    )
     social_uid = models.CharField(max_length=255, blank=True, null=True)
     daily_chat_limit = models.IntegerField(default=6)
     is_social_user = models.BooleanField(default=False)
@@ -21,8 +24,8 @@ class User(AbstractUser):
 
 class Chat(models.Model):
     ROLE_CHOICES = (
-        ('user', 'User'),
-        ('assistant', 'Assistant'),
+        ("user", "User"),
+        ("assistant", "Assistant"),
     )
 
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)

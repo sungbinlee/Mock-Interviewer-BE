@@ -6,76 +6,67 @@ from .models import User
 
 class AccountTests(APITestCase):
     def test_create_account(self):
-        url = reverse('user-register')
+        url = reverse("user-register")
         data = {
-            'username': 'testuser',
-            'password': 'testpassword',
-            'password2': 'testpassword',
-            'email': 'test@test.com',
+            "username": "testuser",
+            "password": "testpassword",
+            "password2": "testpassword",
+            "email": "test@test.com",
         }
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 1)
-        self.assertEqual(User.objects.get().username, 'testuser')
+        self.assertEqual(User.objects.get().username, "testuser")
 
     def test_password_mismatch(self):
-        url = reverse('user-register')
+        url = reverse("user-register")
         data = {
-            'username': 'testuser',
-            'password': 'testpassword',
-            'password2': 'differentpassword',
-            'email': 'test@example.com'
+            "username": "testuser",
+            "password": "testpassword",
+            "password2": "differentpassword",
+            "email": "test@example.com",
         }
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_missing_fields(self):
-        url = reverse('user-register')
-        data = {
-            'username': 'testuser',
-            'email': 'test@example.com'
-        }
-        response = self.client.post(url, data, format='json')
+        url = reverse("user-register")
+        data = {"username": "testuser", "email": "test@example.com"}
+        response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_existing_username(self):
-        User.objects.create_user(username='existinguser', password='existingpassword')
-        
-        url = reverse('user-register')
+        User.objects.create_user(username="existinguser", password="existingpassword")
+
+        url = reverse("user-register")
         data = {
-            'username': 'existinguser',
-            'password': 'testpassword',
-            'password2': 'testpassword',
-            'email': 'test@example.com'
+            "username": "existinguser",
+            "password": "testpassword",
+            "password2": "testpassword",
+            "email": "test@example.com",
         }
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
     def test_login(self):
-        user = User.objects.create_user(username='testuser', password='testpassword')
-        
-        url = reverse('user-login')
-        data = {
-            'username': 'testuser',
-            'password': 'testpassword'
-        }
-        response = self.client.post(url, data, format='json')
+        user = User.objects.create_user(username="testuser", password="testpassword")
+
+        url = reverse("user-login")
+        data = {"username": "testuser", "password": "testpassword"}
+        response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('Token', response.data)
+        self.assertIn("Token", response.data)
 
 
 class ChatGPTAPITests(APITestCase):
     def test_get_conversations(self):
-        User.objects.create_user(username='testuser', password='testpassword')
-        url = reverse('user-login')
-        gpt_url = reverse('chat-gpt')
-        data = {
-            'username': 'testuser',
-            'password': 'testpassword'
-        }
-        self.client.post(url, data, format='json')
-        token = Token.objects.get(user__username='testuser')
+        User.objects.create_user(username="testuser", password="testpassword")
+        url = reverse("user-login")
+        gpt_url = reverse("chat-gpt")
+        data = {"username": "testuser", "password": "testpassword"}
+        self.client.post(url, data, format="json")
+        token = Token.objects.get(user__username="testuser")
         client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
         response = client.get(gpt_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
