@@ -16,7 +16,7 @@ https://github.com/sungbinlee/Mock-Interviewer-FE/assets/52542229/91c1f646-b7f0-
 
   - 음성 입력 기능: 사용자는 음성 입력 버튼을 클릭하여 음성으로 메시지를 작성할 수 있습니다. 이를 통해 키보드를 사용하지 않고도 대화를 진행할 수 있습니다.
 
-## 배포 (AWS 및 OpenAI 과금으로 인해 서비스 중단)
+## 배포 (AWS 및 OpenAI 과금으로 인한 서비스 중단)
 - [배포 URL](https://chat.sungbinlee.dev)
 
 - [프론트엔드](https://github.com/sungbinlee/Mock-Interviewer-FE)
